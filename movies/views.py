@@ -1,18 +1,18 @@
 from django.shortcuts import render
-from django.views.generic.base import View
+from django.views.generic import  ListView, DetailView
 
 from .models import Movie
 
 
-class MovieView(View):
+class MovieView(ListView):
     """Спiсок фильмов"""
-    def get(self, request):
-        movies = Movie.objects.all()
-        return render(request, 'movies_html/movies.html', {'movie_list': movies})
-    
+    model = Movie
+    queryset = Movie.objects.filter(draft=False)
+    template_name = 'movies/movies.html' #это нужно для того чтобы джанго находил путь на авто. он к имени модели добавляет _list
 
-class MovieDetailView(View):
+class MovieDetailView(DetailView):
     """Полное описание и детали к фильму"""
-    def get(self, request, slug):
-        movie = Movie.objects.get(url=slug)
-        return render(request, 'movies_html/movie_detail.html', {'movie':movie})
+    model = Movie
+    slug_field = 'url' 
+    #тут уже _detail и поэтому не нужен template_name
+    
